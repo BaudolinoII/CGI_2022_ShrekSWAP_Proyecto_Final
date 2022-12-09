@@ -1,0 +1,26 @@
+﻿  AnimacionSencilla.cpp
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(193,24): warning C4244: 'inicializando': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(228,20): warning C4244: '=': conversión de 'double' a 'T'; posible pérdida de datos
+          with
+          [
+              T=float
+          ]
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(229,20): warning C4244: '=': conversión de 'double' a 'T'; posible pérdida de datos
+          with
+          [
+              T=float
+          ]
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(230,20): warning C4244: '=': conversión de 'double' a 'T'; posible pérdida de datos
+          with
+          [
+              T=float
+          ]
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(328,70): warning C4244: 'argumento': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(336,26): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(462,11): warning C4244: '=': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(463,11): warning C4244: '=': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(467,18): warning C4244: 'inicializando': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(468,18): warning C4244: 'inicializando': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(470,10): warning C4244: '=': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\ProyectoFinal\AnimacionSencilla.cpp(471,10): warning C4244: '=': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+  ProyectoFinal.vcxproj -> C:\Users\CGIH07\Documents\Semestre2023_1\ProyectoFinal\315104271_PROYECTOFINAL2023-1_Grupo07\ProyectoFinal\Debug\ProyectoFinal.exe
