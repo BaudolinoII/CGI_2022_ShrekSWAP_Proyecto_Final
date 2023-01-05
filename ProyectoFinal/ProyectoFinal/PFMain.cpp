@@ -58,10 +58,13 @@ GLfloat lastFrame = 0.0f;  	// Time of last frame
 void playSoundTrack(int nOST) {
 	switch (nOST) {
 	case 0:
-		PlaySound(TEXT("Audio/All_Star.wav"), NULL, SND_FILENAME);
+		PlaySound(TEXT("Audio/All_Star.wav"), NULL, SND_SYNC);
+		PlaySound(TEXT("Audio/Ambientacion.wav"), NULL, SND_LOOP || SND_NOSTOP);
 		break;
 	case 1:
-		PlaySound(TEXT("Audio/Vieja_Muerta.wav"), NULL, SND_FILENAME);
+		PlaySound(TEXT("Audio/Vieja_Muerta.wav"), NULL, SND_SYNC);
+	case 2:
+		PlaySound(TEXT("Audio/Ambientacion.wav"), NULL, SND_LOOP||SND_NOSTOP);
 		break;
 	}
 }
@@ -378,6 +381,8 @@ int main(){
 		rot_limbs[i] = rt_SB.value[i];
 
 	// Game loop
+	std::thread soundtrack(&playSoundTrack, 2);
+	soundtrack.detach();
 	while (!glfwWindowShouldClose(window)){
 		// Calculate deltatime of current frame
 		GLfloat currentFrame = glfwGetTime();

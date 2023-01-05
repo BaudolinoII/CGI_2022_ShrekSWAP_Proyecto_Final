@@ -1,6 +1,11 @@
-﻿  Main.cpp
-C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Proyectos\Donuts\Donuts\Main.cpp(11,28): warning C4018: '<': no coinciden signed/unsigned
-C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Proyectos\Donuts\Donuts\Main.cpp(13,29): warning C4018: '<': no coinciden signed/unsigned
-C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Proyectos\Donuts\Donuts\Main.cpp(15,29): warning C4018: '<': no coinciden signed/unsigned
-C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Proyectos\Donuts\Donuts\Main.cpp(17,29): warning C4018: '<': no coinciden signed/unsigned
-  Donuts.vcxproj -> C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Proyectos\Donuts\x64\Debug\Donuts.exe
+﻿  Donut.cpp
+C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Final_Teoria\Donuts\Donuts\Donut.cpp(17,20): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Final_Teoria\Donuts\Donuts\Donut.cpp(27,20): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Final_Teoria\Donuts\Donuts\Donut.cpp(28,21): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Final_Teoria\Donuts\Donuts\Donut.cpp(93,29): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Final_Teoria\Donuts\Donuts\Donut.cpp(95,29): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Final_Teoria\Donuts\Donuts\Donut.cpp(97,29): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Final_Teoria\Donuts\Donuts\Donut.cpp(99,29): warning C4018: '<': no coinciden signed/unsigned
+  Main.cpp
+  Generando código...
+  Donuts.vcxproj -> C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Final_Teoria\Donuts\x64\Debug\Donuts.exe

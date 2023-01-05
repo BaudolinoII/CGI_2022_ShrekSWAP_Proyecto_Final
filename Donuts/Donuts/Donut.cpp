@@ -1,5 +1,7 @@
 #include"Donut.h"
 #include<cmath>
+#include<fstream>
+#include<iostream>
 
 #define PI 3.14159265358979323846f
 
@@ -71,4 +73,30 @@ float* getNormalArray(float* vertexArray, int* indexArray, const unsigned int si
 		normalArray[3 * i] = nx; normalArray[3 * i + 1] = ny; normalArray[3 * i + 2] = nz;
 	}
 	return normalArray;
+}
+
+void makeObject(const float inRad, const float forRad, const unsigned int inQual, const unsigned int forQual) {
+	std::ofstream escritura;
+	escritura.open("donut.obj", std::ios::out);
+	if (escritura.fail()) {
+		std::cout << "Fallo al Escribir\n";
+		return;
+	}
+	const unsigned int iQ = getRealSubDiv(inQual), fQ = getRealSubDiv(forQual);
+	int VTsize = (iQ + 1) * (fQ + 1), Fsize = iQ * fQ * 2;
+	int* Farray = getIndexArray(iQ, fQ);
+	float* UVarray = getUVArray(iQ, fQ);
+	float* Varray = getVertexArray(inRad, forRad, iQ, fQ);
+	float* Narray = getNormalArray(Varray, Farray, VTsize);
+	escritura << "# DonutMaker by DynamicWare OBJ File: 'Donut'" << std::endl << "# DynamicWare by JoGEHrt" << std::endl;
+	escritura << "o Donut" << std::endl;
+	for (unsigned int i = 0; i < VTsize; i++)
+		escritura << "v " << Varray[3 * i] << " " << Varray[3 * i + 1] << " " << Varray[3 * i + 2] << std::endl;
+	for (unsigned int i = 0; i < VTsize; i++)
+		escritura << "vt " << UVarray[2 * i] << " " << UVarray[2 * i + 1] << std::endl;
+	for (unsigned int i = 0; i < VTsize; i++)
+		escritura << "n " << Narray[3 * i] << " " << Narray[3 * i + 1] << " " << Narray[3 * i + 2] << std::endl;
+	for (unsigned int i = 0; i < Fsize; i++)
+		escritura << "f " << Farray[3 * i] + 1 << "/" << i + 1 << "/" << i + 1 << " " << Farray[3 * i + 1] + 1 << "/" << i + 1 << "/" << i + 1 << " " << Farray[3 * i + 2] + 1 << "/" << i + 1 << "/" << i + 1 << " " << std::endl;
+	escritura.close();
 }

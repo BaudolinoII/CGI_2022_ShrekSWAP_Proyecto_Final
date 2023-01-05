@@ -8,4 +8,6 @@ int* getIndexArray(const unsigned int inQual, const unsigned int forQual);
 float* getUVArray(const unsigned int inQual, const unsigned int forQual);
 float* getVertexArray(const float inRad, const float forRad, const unsigned int inQual, const unsigned int forQual);
 float* getNormalArray(float* vertexArray, int* indexArray, const unsigned int size);
+
+void makeObject(const float inRad, const float forRad, const unsigned int inQual, const unsigned int forQual);
 #endif // DONUT_CLASS_H
