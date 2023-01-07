@@ -18,44 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\fire.frag">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\fire.vs">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\single.frag">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\single.vs">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\standar.frag">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\standar.vs">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\waves.frag">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\waves.vs">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\anim.frag">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\anim.vs">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\SkyBox.frag">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-    <None Include="Shaders\SkyBox.vs">
-      <Filter>Archivos de origen\Shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Mesh.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -77,10 +39,60 @@
     <ClInclude Include="Texture.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Donut.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PFMain.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Donut.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\anim.frag">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\anim.vs">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\fire.frag">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\fire.vs">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\prime.frag">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\prime.vs">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\single.frag">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\single.vs">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\SkyBox.frag">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\SkyBox.vs">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\standar.frag">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\standar.vs">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\waves.frag">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
+    <None Include="Shaders\waves.vs">
+      <Filter>Archivos de origen\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

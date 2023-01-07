@@ -19,20 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\anim.frag" />
-    <None Include="Shaders\anim.vs" />
-    <None Include="Shaders\fire.frag" />
-    <None Include="Shaders\fire.vs" />
-    <None Include="Shaders\single.frag" />
-    <None Include="Shaders\single.vs" />
-    <None Include="Shaders\SkyBox.frag" />
-    <None Include="Shaders\SkyBox.vs" />
-    <None Include="Shaders\standar.frag" />
-    <None Include="Shaders\standar.vs" />
-    <None Include="Shaders\waves.frag" />
-    <None Include="Shaders\waves.vs" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="Donut.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="meshAnim.h" />
     <ClInclude Include="Model.h" />
@@ -42,7 +29,24 @@
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Donut.cpp" />
     <ClCompile Include="PFMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\anim.frag" />
+    <None Include="Shaders\anim.vs" />
+    <None Include="Shaders\fire.frag" />
+    <None Include="Shaders\fire.vs" />
+    <None Include="Shaders\prime.frag" />
+    <None Include="Shaders\prime.vs" />
+    <None Include="Shaders\single.frag" />
+    <None Include="Shaders\single.vs" />
+    <None Include="Shaders\SkyBox.frag" />
+    <None Include="Shaders\SkyBox.vs" />
+    <None Include="Shaders\standar.frag" />
+    <None Include="Shaders\standar.vs" />
+    <None Include="Shaders\waves.frag" />
+    <None Include="Shaders\waves.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
