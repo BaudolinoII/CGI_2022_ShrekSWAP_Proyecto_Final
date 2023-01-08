@@ -220,6 +220,7 @@ const float degree(const float current, const float goal) {
 		return current + 0.0001f;
 	return current;
 }
+
 void resetScene() {
 	active = false; one_shot_0 = true; one_shot_1 = true; currLight = 0.7f; targetLight = 0.7f;
 	rt_Pos_Shrek.play = false; rt_Pos_Shrek.setAtCero();
@@ -325,36 +326,30 @@ int main(){
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[1].diffuse"), 0.9f, 0.72f, 0.53f);
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[1].specular"), 0.9f, 0.72f, 0.53f);
 	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[1].constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[1].linear"), 0.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[1].quadratic"), 0.0f);
 	// Point light 3
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[2].position"), pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[2].ambient"), 0.02f, 0.02f, 0.02f);
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[2].diffuse"), 0.9f, 0.72f, 0.53f);
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[2].specular"), 0.9f, 0.72f, 0.53f);
 	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[2].constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[2].linear"), 0.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[2].quadratic"), 0.0f);
 	// Point light 4
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[3].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[3].ambient"), 0.02f, 0.02f, 0.02f);
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[3].diffuse"), 0.9f, 0.72f, 0.53f);
 	glUniform3f(glGetUniformLocation(standar.Program, "pointLights[3].specular"), 0.9f, 0.72f, 0.53f);
 	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].linear"), 0.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].quadratic"), 0.0f);
 
 	// SpotLight
 	glUniform3f(glGetUniformLocation(standar.Program, "spotLight.position"), 5.0f, 5.0f, 4.0f);
-	glUniform3f(glGetUniformLocation(standar.Program, "spotLight.direction"), camera.GetFront().x, camera.GetFront().y, camera.GetFront().z);
+	glUniform3f(glGetUniformLocation(standar.Program, "spotLight.direction"), 0.0f, -0.5f, 1.0f);
 	glUniform3f(glGetUniformLocation(standar.Program, "spotlight.ambient"), 0.02f, 0.02f, 0.02f);
 	glUniform3f(glGetUniformLocation(standar.Program, "spotlight.diffuse"), 0.9f, 0.72f, 0.53f);
 	glUniform3f(glGetUniformLocation(standar.Program, "spotlight.specular"), 0.9f, 0.72f, 0.53f);
 	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.linear"), 0.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.quadratic"), 0.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.cutOff"), glm::cos(glm::radians(0.0f)));
-	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(0.0f)));
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.linear"), 0.025f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.quadratic"), 0.0125f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.cutOff"), glm::cos(glm::radians(10.0f)));
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(40.0f)));
 
 	// Set material properties
 	glUniform1f(glGetUniformLocation(standar.Program, "material.shininess"), 16.0f);
@@ -413,7 +408,7 @@ int main(){
 
 	setAnim();
 	
-	float random = 0.0f, deg = 0.025f;
+	float random[] = { 0.0f, 0.0f, 0.0f, 0.0f} , deg[] = { 0.025f, 0.025f, 0.025f, 0.025f};
 	float rot_limbs[10];
 	for (unsigned int i = 0; i < 10; i++)
 		rot_limbs[i] = rt_SB.value[i];
@@ -529,13 +524,20 @@ int main(){
 		standar.Use();
 		GLint viewPosLoc = glGetUniformLocation(standar.Program, "viewPos");
 		glUniform3f(viewPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
+		for(int i = 0; i < 4 ; i++)
+			if (abs((0.0125f + random[i]) - degree(deg[i], 0.0125f + random[i])) < 0.00001)
+				random[i] = (float)(std::rand() % 1000) / 10000.0f;
+			else
+				deg[i] = degree(deg[i], 0.0125 + random[i]);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[0].linear"), deg[0]);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[0].quadratic"), deg[0] / 2.0f);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[1].linear"), deg[1]);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[1].quadratic"), deg[1] / 2.0f);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[2].linear"), deg[2]);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[2].quadratic"), deg[2] / 2.0f);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].linear"), deg[3]);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].quadratic"), deg[3] / 2.0f);
 		
-		if (abs((0.0125f + random) - degree(deg, 0.0125f + random)) < 0.00001)
-			random = (float)(std::rand() % 1000) / 10000.0f;
-		else
-			deg = degree(deg, 0.0125 + random);
-		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[0].linear"), deg);
-		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[0].quadratic"), deg / 2.0f);
 		// Global Light
 		currLight = degree(currLight, targetLight);
 		glUniform3f(glGetUniformLocation(standar.Program, "dirLight.ambient"), currLight, currLight, currLight);
