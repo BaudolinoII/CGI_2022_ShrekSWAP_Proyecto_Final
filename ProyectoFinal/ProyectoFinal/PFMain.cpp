@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <mmsystem.h>
 #include <thread>
+#include <vector>
 // GLEW GLfW
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -28,13 +29,16 @@ void DoMovement();
 const GLuint WIDTH = 1200, HEIGHT = 800;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 float currLight = 0.7f, targetLight = 0.7f;
+float thrX = 0.0f, thrZ = 0.0f;
 // Camera
 Camera  camera(glm::vec3(-12.5f, 8.0f, 45.0f));
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
 bool firstMouse = true, active = false, one_shot_0 = true, one_shot_1 = true;
+bool lighton[] = { false, false, false }; bool dayCycle = false;
 
+unsigned int valCamera = 0;
 // Positions of the point lights
 glm::vec3 pointLightPositions[] = {
 	glm::vec3(-1.0f, 0.7f, -12.5f),
@@ -130,6 +134,7 @@ typedef struct _routine {
 RT rt_Pos_Shrek(4, 13, 600, false);//Rutina Principal
 RT rt_WK(10, 9, 90, true), rt_SB(10, 4, 240, false), rt_VM(10, 4, 450, false);//Rutinas Extremidades Shrek
 RT rt_Puerta_Bano(4, 5, 120, false), rt_Puerta_Casa(1, 4, 300, false), rt_Ataud(3, 4, 300, false), rt_Sillas(2, 3, 300, false);//Rutinas del entorno
+RT rt_Lights(3, 4, 450, true), rt_dayCycle(1, 9, 800, true);
 void setAnim() {
 	////////////////////////////////////////////////////////ANIMACION DE MOVIMIENTO SHREK////////////////////////////////////////////////////////////
 	rt_Pos_Shrek.KF[0].var[0] = 27.0f; rt_Pos_Shrek.KF[0].var[1] = 10.3f; rt_Pos_Shrek.KF[0].var[2] = 23.0f; rt_Pos_Shrek.KF[0].var[3] = -130.0f;//Inicio
@@ -211,6 +216,13 @@ void setAnim() {
 	rt_VM.KF[2].var[6] = -90.0f; rt_VM.KF[2].var[7] = 90.0f; rt_VM.KF[2].var[8] = -90.0f; rt_VM.KF[2].var[9] = 90.0f;
 	rt_VM.KF[3].var[6] = -90.0f; rt_VM.KF[3].var[7] = 90.0f; rt_VM.KF[3].var[8] = -90.0f; rt_VM.KF[3].var[9] = 90.0f;
 	rt_VM.setAtCero();////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	rt_Lights.KF[0].var[0] = 0.7f; rt_Lights.KF[1].var[0] = 0.1f; rt_Lights.KF[2].var[0] = 0.1f; rt_Lights.KF[3].var[0] = 0.7f;
+	rt_Lights.KF[0].var[1] = 0.0f; rt_Lights.KF[1].var[1] = 90.0f; rt_Lights.KF[2].var[1] = 180.0f; rt_Lights.KF[3].var[1] = 270.0f;
+	rt_Lights.KF[0].var[2] = 180.0f; rt_Lights.KF[1].var[2] = 90.0f; rt_Lights.KF[2].var[2] = 0.0f; rt_Lights.KF[3].var[2] = -90.0f;
+	rt_Lights.setAtCero();
+	rt_dayCycle.KF[0].var[0] = 0.7f; rt_dayCycle.KF[1].var[0] = 0.55f; rt_dayCycle.KF[2].var[0] = 0.4f; rt_dayCycle.KF[3].var[0] = 0.2f;
+	rt_dayCycle.KF[4].var[0] = 0.1f; rt_dayCycle.KF[5].var[0] = 0.2f; rt_dayCycle.KF[6].var[0] = 0.4f; rt_dayCycle.KF[7].var[0] = 0.55f;
+	rt_dayCycle.KF[8].var[0] = 0.7f; rt_dayCycle.setAtCero();
 }
 
 const float degree(const float current, const float goal) {
@@ -222,7 +234,7 @@ const float degree(const float current, const float goal) {
 }
 
 void resetScene() {
-	active = false; one_shot_0 = true; one_shot_1 = true; currLight = 0.7f; targetLight = 0.7f;
+	active = false; one_shot_0 = true; one_shot_1 = true; lighton[1] = false; currLight = 0.7f; targetLight = 0.7f; dayCycle = false;
 	rt_Pos_Shrek.play = false; rt_Pos_Shrek.setAtCero();
 	rt_Puerta_Bano.play = false; rt_Puerta_Bano.setAtCero();
 	rt_Puerta_Casa.play = false; rt_Puerta_Casa.setAtCero();
@@ -340,17 +352,26 @@ int main(){
 	glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].constant"), 1.0f);
 
 	// SpotLight
-	glUniform3f(glGetUniformLocation(standar.Program, "spotLight.position"), 5.0f, 5.0f, 4.0f);
-	glUniform3f(glGetUniformLocation(standar.Program, "spotLight.direction"), 0.0f, -0.5f, 1.0f);
-	glUniform3f(glGetUniformLocation(standar.Program, "spotlight.ambient"), 0.02f, 0.02f, 0.02f);
-	glUniform3f(glGetUniformLocation(standar.Program, "spotlight.diffuse"), 0.9f, 0.72f, 0.53f);
-	glUniform3f(glGetUniformLocation(standar.Program, "spotlight.specular"), 0.9f, 0.72f, 0.53f);
-	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.linear"), 0.025f);
-	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.quadratic"), 0.0125f);
-	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.cutOff"), glm::cos(glm::radians(10.0f)));
-	glUniform1f(glGetUniformLocation(standar.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(40.0f)));
+	glUniform3f(glGetUniformLocation(standar.Program, "spotLight[0].position"), 5.0f, 5.0f, 4.0f);
 
+	glUniform3f(glGetUniformLocation(standar.Program, "spotlight[0].ambient"), 0.2f, 0.2f, 0.2f);
+	glUniform3f(glGetUniformLocation(standar.Program, "spotlight[0].diffuse"), 0.9f, 0.72f, 0.53f);
+	glUniform3f(glGetUniformLocation(standar.Program, "spotlight[0].specular"), 0.9f, 0.72f, 0.53f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[0].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[0].linear"), 0.045f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[0].quadratic"), 0.075f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[0].cutOff"), glm::cos(glm::radians(0.0f)));
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[0].outerCutOff"), glm::cos(glm::radians(40.0f)));
+
+	glUniform3f(glGetUniformLocation(standar.Program, "spotLight[1].position"), 25.0f, 13.7f, 23.3f);
+	glUniform3f(glGetUniformLocation(standar.Program, "spotlight[1].ambient"), 0.2f, 0.2f, 0.2f);
+	glUniform3f(glGetUniformLocation(standar.Program, "spotlight[1].diffuse"), 0.9f, 0.72f, 0.53f);
+	glUniform3f(glGetUniformLocation(standar.Program, "spotlight[1].specular"), 0.9f, 0.72f, 0.53f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[1].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[1].linear"), 0.045f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[1].quadratic"), 0.075f);
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[1].cutOff"), glm::cos(glm::radians(0.0f)));
+	glUniform1f(glGetUniformLocation(standar.Program, "spotLight[1].outerCutOff"), glm::cos(glm::radians(40.0f)));
 	// Set material properties
 	glUniform1f(glGetUniformLocation(standar.Program, "material.shininess"), 16.0f);
 
@@ -375,11 +396,310 @@ int main(){
 	glm::mat4 projection = glm::perspective(camera.GetZoom(), (GLfloat)SCREEN_WIDTH / (GLfloat)SCREEN_HEIGHT, 0.1f, 100.0f);
 
 	//Implementacion del Donut
-	const unsigned int IQ = getRealSubDiv(1), FQ = getRealSubDiv(1);
-	float* vertices = getVertexArray(5.0f, 5.0f, IQ, FQ);
-	int* indices = getIndexArray(IQ, FQ);
-	unsigned int sizeofvertex = IQ * FQ * 12;
-	unsigned int sizeofindex = (IQ * FQ - 1)* 24;
+	const unsigned int IQ = getRealSubDiv(4), FQ = getRealSubDiv(4);
+	std::vector<float> vertices;
+	getVertexArray(&vertices, 5.0f, 5.0f, IQ, FQ);
+	std::vector<int> indices;
+	getIndexArray(&indices, IQ, FQ);
+
+	float pVert[] = {	5.0f, 0.0f, 0.0f,
+						5.5f, 2.93893f, 0.0f,
+						6.0f, 4.75528f, 0.0f,
+						6.5f, 4.75528f, 0.0f,
+						7.0f, 2.93893f, 0.0f,
+						7.5f, 0.0f, 0.0f,
+						8.0f, -2.93893f, 0.0f,
+						8.5f, -4.75528f, 0.0f,
+						9.0f, -4.75528f, 0.0f,
+						9.5f, -2.93892f, 0.0f,
+						4.04508f, 0.0f, 2.93893f,
+						4.44959f, 2.93893f, 3.23282f,
+						4.8541f, 4.75528f, 3.52671f,
+						5.25861f, 4.75528f, 3.8206f,
+						5.66312f, 2.93893f, 4.1145f,
+						6.06763f, 0.0f, 4.40839f,
+						6.47214f, -2.93893f, 4.70228f,
+						6.87664f, -4.75528f, 4.99617f,
+						7.28115f, -4.75528f, 5.29007f,
+						7.68566f, -2.93892f, 5.58396f,
+						1.54508f, 0.0f, 4.75528f,
+						1.69959f, 2.93893f, 5.23081f,
+						1.8541f, 4.75528f, 5.70634f,
+						2.00861f, 4.75528f, 6.18187f,
+						2.16312f, 2.93893f, 6.6574f,
+						2.31763f, 0.0f, 7.13292f,
+						2.47214f, -2.93893f, 7.60845f,
+						2.62664f, -4.75528f, 8.08398f,
+						2.78115f, -4.75528f, 8.55951f,
+						2.93566f, -2.93892f, 9.03504f,
+						-1.54509f, 0.0f, 4.75528f,
+						-1.69959f, 2.93893f, 5.23081f,
+						-1.8541f, 4.75528f, 5.70634f,
+						-2.00861f, 4.75528f, 6.18187f,
+						-2.16312f, 2.93893f, 6.6574f,
+						-2.31763f, 0.0f, 7.13292f,
+						-2.47214f, -2.93893f, 7.60845f,
+						-2.62664f, -4.75528f, 8.08398f,
+						-2.78115f, -4.75528f, 8.55951f,
+						-2.93566f, -2.93892f, 9.03504f,
+						-4.04509f, 0.0f, 2.93893f,
+						-4.44959f, 2.93893f, 3.23282f,
+						-4.8541f, 4.75528f, 3.52671f,
+						-5.25861f, 4.75528f, 3.8206f,
+						-5.66312f, 2.93893f, 4.1145f,
+						-6.06763f, 0.0f, 4.40839f,
+						-6.47214f, -2.93893f, 4.70228f,
+						-6.87665f, -4.75528f, 4.99617f,
+						-7.28115f, -4.75528f, 5.29007f,
+						-7.68566f, -2.93892f, 5.58396f,
+						-5.0f, 0.0f, 0.0f,
+						-5.5f, 2.93893f, 0.0f,
+						-6.0f, 4.75528f, 0.0f,
+						-6.5f, 4.75528f, 0.0f,
+						-7.0f, 2.93893f, 0.0f,
+						-7.5f, 0.0f, 0.0f,
+						-8.0f, -2.93893f, 0.0f,
+						-8.5f, -4.75528f, 0.0f,
+						-9.0f, -4.75528f, 0.0f,
+						-9.5f, -2.93892f, 0.0f,
+						-4.04508f, 0.0f, -2.93893f,
+						-4.44959f, 2.93893f, -3.23282f,
+						-4.8541f, 4.75528f, -3.52671f,
+						-5.25861f, 4.75528f, -3.8206f,
+						-5.66312f, 2.93893f, -4.1145f,
+						-6.06763f, 0.0f, -4.40839f,
+						-6.47214f, -2.93893f, -4.70228f,
+						-6.87664f, -4.75528f, -4.99618f,
+						-7.28115f, -4.75528f, -5.29007f,
+						-7.68566f, -2.93892f, -5.58396f,
+						-1.54509f, 0.0f, -4.75528f,
+						-1.69959f, 2.93893f, -5.23081f,
+						-1.8541f, 4.75528f, -5.70634f,
+						-2.00861f, 4.75528f, -6.18187f,
+						-2.16312f, 2.93893f, -6.6574f,
+						-2.31763f, 0.0f, -7.13292f,
+						-2.47214f, -2.93893f, -7.60845f,
+						-2.62665f, -4.75528f, -8.08398f,
+						-2.78115f, -4.75528f, -8.55951f,
+						-2.93566f, -2.93892f, -9.03504f,
+						1.54509f, 0.0f, -4.75528f,
+						1.69959f, 2.93893f, -5.23081f,
+						1.8541f, 4.75528f, -5.70634f,
+						2.00861f, 4.75528f, -6.18187f,
+						2.16312f, 2.93893f, -6.6574f,
+						2.31763f, 0.0f, -7.13292f,
+						2.47214f, -2.93893f, -7.60845f,
+						2.62665f, -4.75528f, -8.08398f,
+						2.78115f, -4.75528f, -8.55951f,
+						2.93566f, -2.93892f, -9.03504f,
+						4.04509f, 0.0f, -2.93892f,
+						4.44959f, 2.93893f, -3.23282f,
+						4.8541f, 4.75528f, -3.52671f,
+						5.25861f, 4.75528f, -3.8206f,
+						5.66312f, 2.93893f, -4.11449f,
+						6.06763f, 0.0f, -4.40839f,
+						6.47214f, -2.93893f, -4.70228f,
+						6.87665f, -4.75528f, -4.99617f,
+						7.28116f, -4.75528f, -5.29006f,
+						7.68566f, -2.93892f, -5.58396f, };
+	int pIndx[] =  {	0, 11, 10,
+						1, 11, 0,
+						1, 12, 11,
+						2, 12, 1,
+						2, 13, 12,
+						3, 13, 2,
+						3, 14, 13,
+						4, 14, 3,
+						4, 15, 14,
+						5, 15, 4,
+						5, 16, 15,
+						6, 16, 5,
+						6, 17, 16,
+						7, 17, 6,
+						7, 18, 17,
+						8, 18, 7,
+						8, 19, 18,
+						9, 19, 8,
+						9, 10, 19,
+						0, 10, 9,
+						10, 21, 20,
+						11, 21, 10,
+						11, 22, 21,
+						12, 22, 11,
+						12, 23, 22,
+						13, 23, 12,
+						13, 24, 23,
+						14, 24, 13,
+						14, 25, 24,
+						15, 25, 14,
+						15, 26, 25,
+						16, 26, 15,
+						16, 27, 26,
+						17, 27, 16,
+						17, 28, 27,
+						18, 28, 17,
+						18, 29, 28,
+						19, 29, 18,
+						19, 20, 29,
+						10, 20, 19,
+						20, 31, 30,
+						21, 31, 20,
+						21, 32, 31,
+						22, 32, 21,
+						22, 33, 32,
+						23, 33, 22,
+						23, 34, 33,
+						24, 34, 23,
+						24, 35, 34,
+						25, 35, 24,
+						25, 36, 35,
+						26, 36, 25,
+						26, 37, 36,
+						27, 37, 26,
+						27, 38, 37,
+						28, 38, 27,
+						28, 39, 38,
+						29, 39, 28,
+						29, 30, 39,
+						20, 30, 29,
+						30, 41, 40,
+						31, 41, 30,
+						31, 42, 41,
+						32, 42, 31,
+						32, 43, 42,
+						33, 43, 32,
+						33, 44, 43,
+						34, 44, 33,
+						34, 45, 44,
+						35, 45, 34,
+						35, 46, 45,
+						36, 46, 35,
+						36, 47, 46,
+						37, 47, 36,
+						37, 48, 47,
+						38, 48, 37,
+						38, 49, 48,
+						39, 49, 38,
+						39, 40, 49,
+						30, 40, 39,
+						40, 51, 50,
+						41, 51, 40,
+						41, 52, 51,
+						42, 52, 41,
+						42, 53, 52,
+						43, 53, 42,
+						43, 54, 53,
+						44, 54, 43,
+						44, 55, 54,
+						45, 55, 44,
+						45, 56, 55,
+						46, 56, 45,
+						46, 57, 56,
+						47, 57, 46,
+						47, 58, 57,
+						48, 58, 47,
+						48, 59, 58,
+						49, 59, 48,
+						49, 50, 59,
+						40, 50, 49,
+						50, 61, 60,
+						51, 61, 50,
+						51, 62, 61,
+						52, 62, 51,
+						52, 63, 62,
+						53, 63, 52,
+						53, 64, 63,
+						54, 64, 53,
+						54, 65, 64,
+						55, 65, 54,
+						55, 66, 65,
+						56, 66, 55,
+						56, 67, 66,
+						57, 67, 56,
+						57, 68, 67,
+						58, 68, 57,
+						58, 69, 68,
+						59, 69, 58,
+						59, 60, 69,
+						50, 60, 59,
+						60, 71, 70,
+						61, 71, 60,
+						61, 72, 71,
+						62, 72, 61,
+						62, 73, 72,
+						63, 73, 62,
+						63, 74, 73,
+						64, 74, 63,
+						64, 75, 74,
+						65, 75, 64,
+						65, 76, 75,
+						66, 76, 65,
+						66, 77, 76,
+						67, 77, 66,
+						67, 78, 77,
+						68, 78, 67,
+						68, 79, 78,
+						69, 79, 68,
+						69, 70, 79,
+						60, 70, 69,
+						70, 81, 80,
+						71, 81, 70,
+						71, 82, 81,
+						72, 82, 71,
+						72, 83, 82,
+						73, 83, 72,
+						73, 84, 83,
+						74, 84, 73,
+						74, 85, 84,
+						75, 85, 74,
+						75, 86, 85,
+						76, 86, 75,
+						76, 87, 86,
+						77, 87, 76,
+						77, 88, 87,
+						78, 88, 77,
+						78, 89, 88,
+						79, 89, 78,
+						79, 80, 89,
+						70, 80, 79,
+						80, 91, 90,
+						81, 91, 80,
+						81, 92, 91,
+						82, 92, 81,
+						82, 93, 92,
+						83, 93, 82,
+						83, 94, 93,
+						84, 94, 83,
+						84, 95, 94,
+						85, 95, 84,
+						85, 96, 95,
+						86, 96, 85,
+						86, 97, 96,
+						87, 97, 86,
+						87, 98, 97,
+						88, 98, 87,
+						88, 99, 98,
+						89, 99, 88,
+						89, 90, 99,
+						80, 90, 89,
+						90, 1, 0,
+						91, 1, 90,
+						91, 2, 1,
+						92, 2, 91,
+						92, 3, 2,
+						93, 3, 92,
+						93, 4, 3,
+						94, 4, 93,
+						94, 5, 4,
+						95, 5, 94,
+						95, 6, 5,
+						96, 6, 95,
+						96, 7, 6,
+						97, 7, 96,
+						97, 8, 7,
+						98, 8, 97,
+						98, 9, 8,
+						99, 9, 98, };
 	
 	GLuint VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
@@ -391,10 +711,12 @@ int main(){
 
 	//2.- Copiamos nuestros arreglo de vertices en un buffer de vertices para que OpenGL lo use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeofvertex, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pVert), pVert, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float) * 2, vertices.data(), GL_STATIC_DRAW);
 	// 3.Copiamos nuestro arreglo de indices en  un elemento del buffer para que OpenGL lo use
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeofindex, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(pIndx), pIndx, GL_STATIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int) * 2, indices.data(), GL_STATIC_DRAW);
 
 	// 4. Despues colocamos las caracteristicas de los vertices
 
@@ -407,7 +729,7 @@ int main(){
 	glBindVertexArray(0); // Desenlazamos de memoria el VAO
 
 	setAnim();
-	
+	rt_Lights.play = true;
 	float random[] = { 0.0f, 0.0f, 0.0f, 0.0f} , deg[] = { 0.025f, 0.025f, 0.025f, 0.025f};
 	float rot_limbs[10];
 	for (unsigned int i = 0; i < 10; i++)
@@ -431,7 +753,8 @@ int main(){
 		glEnable(GL_DEPTH_TEST);
 
 
-
+		rt_Lights.animacion();
+		rt_dayCycle.animacion();
 		if (active) { //Animacion general de la escena
 			rt_Pos_Shrek.animacion();//Animacion Maestra
 			
@@ -443,6 +766,7 @@ int main(){
 			if (rt_Pos_Shrek.currFrame > 0) {
 				rt_Puerta_Bano.animacion();
 				rt_SB.animacion();
+				lighton[2] = true;
 			}
 			if (rt_Pos_Shrek.currFrame > 2) {
 				rt_WK.animacion();
@@ -479,7 +803,7 @@ int main(){
 			case 6:
 			case 7:
 			case 8:
-				targetLight = 0.2f;
+				targetLight = 0.1f;
 				for (unsigned int i = 0; i < 10; i++)
 					rot_limbs[i] = rt_WK.value[i];
 				break;
@@ -512,34 +836,55 @@ int main(){
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glBindVertexArray(VAO);
-		//glPointSize(20);
-		model = glm::translate(glm::mat4(1), glm::vec3(0.0f, 20.0f, 0.0f));
-		model = glm::rotate(model,glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::translate(glm::mat4(1), glm::vec3(-0.65f, 2.5f, -6.5f));
+		model = glm::scale(model, glm::vec3(0.08f, 0.08f, 0.08f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//glDrawElements(GL_TRIANGLES, (IQ * FQ - 1) * 2, GL_UNSIGNED_INT, (GLvoid*)(0 * sizeof(GLfloat)));
-		//glDrawArrays(GL_POINTS, 0, IQ * FQ );
+		glDrawElements(GL_TRIANGLES, indices.size()*2 , GL_UNSIGNED_INT, (GLvoid*)(0 * sizeof(GLfloat)));
+		//glPointSize(15);
+		//glDrawArrays(GL_POINTS, 0, vertices.size()*2 );
 		glBindVertexArray(0);
 
 		standar.Use();
 		GLint viewPosLoc = glGetUniformLocation(standar.Program, "viewPos");
+		switch (valCamera) {
+			case 0:
+				break;
+			case 1:
+				camera.position = glm::vec3(6.8f, 6.7f, 0.0f);
+				break;
+			case 2:
+				camera.position = glm::vec3(-6.6f, 5.0f, -7.8f);
+				break;
+			case 3:
+				
+				camera.position = glm::vec3(rt_Pos_Shrek.value[0] - 1.0f, rt_Pos_Shrek.value[1] + 1.5f, rt_Pos_Shrek.value[1] - 2.0f);
+				break;
+		}
+			
 		glUniform3f(viewPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
 		for(int i = 0; i < 4 ; i++)
 			if (abs((0.0125f + random[i]) - degree(deg[i], 0.0125f + random[i])) < 0.00001)
 				random[i] = (float)(std::rand() % 1000) / 10000.0f;
 			else
 				deg[i] = degree(deg[i], 0.0125 + random[i]);
-		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[0].linear"), deg[0]);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[0].linear"),  deg[0]);
 		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[0].quadratic"), deg[0] / 2.0f);
-		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[1].linear"), deg[1]);
-		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[1].quadratic"), deg[1] / 2.0f);
-		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[2].linear"), deg[2]);
-		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[2].quadratic"), deg[2] / 2.0f);
-		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].linear"), deg[3]);
-		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].quadratic"), deg[3] / 2.0f);
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[1].linear"), (lighton[0] ? deg[1] : 1.0f));
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[1].quadratic"), (lighton[0] ? deg[1] / 2.0f : 1.0f));
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[2].linear"), (lighton[1] ? deg[2] : 1.0f));
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[2].quadratic"), (lighton[1] ? deg[2] / 2.0f : 1.0f));
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].linear"), (lighton[2] ? deg[3] : 1.0f));
+		glUniform1f(glGetUniformLocation(standar.Program, "pointLights[3].quadratic"), (lighton[2] ? deg[3] / 2.0f : 1.0f));
+
+		glUniform3f(glGetUniformLocation(standar.Program, "spotLight[0].direction"), glm::radians(45.0f), glm::radians(rt_Lights.value[1]), glm::radians(45.0f));
+		glUniform3f(glGetUniformLocation(standar.Program, "spotLight[1].direction"), glm::radians(45.0f), glm::radians(rt_Lights.value[2]), glm::radians(45.0f));
 		
 		// Global Light
-		currLight = degree(currLight, targetLight);
+		if (dayCycle)
+			currLight = rt_dayCycle.value[0];
+		else
+			currLight = degree(currLight, targetLight);
+		lighton[0] = currLight < 0.4f;
 		glUniform3f(glGetUniformLocation(standar.Program, "dirLight.ambient"), currLight, currLight, currLight);
 
 		// Create camera transformations
@@ -625,6 +970,9 @@ int main(){
 		model = glm::translate(glm::mat4(1), glm::vec3(5.0f, 5.0f, 4.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Linterna.Draw(standar);
+		model = glm::translate(glm::mat4(1), glm::vec3(25.0f, 13.7f, 23.3f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		Linterna.Draw(standar);
 		model = glm::translate(glm::mat4(1), glm::vec3(27.0f, 8.0f, 23.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Bano.Draw(standar);
@@ -662,18 +1010,27 @@ int main(){
 		Cristal.Draw(standar);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1), glm::vec3(-1.0f, 0.7f, -12.5f))));
 		Fuego.Draw(standar);
-		model = glm::translate(glm::mat4(1), pointLightPositions[1]);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Luz.Draw(standar);
-		model = glm::translate(glm::mat4(1), pointLightPositions[2]);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Luz.Draw(standar);
-		model = glm::translate(glm::mat4(1), pointLightPositions[3]);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Luz.Draw(standar);
+		if (lighton[0]) {
+			model = glm::translate(glm::mat4(1), pointLightPositions[1]);
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			Luz.Draw(standar);
+		}
+		if (lighton[1]) {
+			model = glm::translate(glm::mat4(1), pointLightPositions[2]);
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			Luz.Draw(standar);
+		}
+		if (lighton[2]) {
+			model = glm::translate(glm::mat4(1), pointLightPositions[3]);
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			Luz.Draw(standar);
+		}
 		model = glm::translate(glm::mat4(1), glm::vec3(5.0f, 5.0f, 4.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Luz.Draw(standar);
+		model = glm::translate(glm::mat4(1), glm::vec3(25.0f, 13.7f, 23.3f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		Luz.Draw(standar); 
 		glUniform1f(glGetUniformLocation(standar.Program, "alpha"), 1.0f);
 		glDisable(GL_BLEND);  //Desactiva el canal alfa 
 		glBindVertexArray(0);
@@ -709,11 +1066,23 @@ void DoMovement(){
 	if (keys[GLFW_KEY_S] || keys[GLFW_KEY_DOWN])
 		camera.ProcessKeyboard(BACKWARD, deltaTime);
 
-	if (keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT])
+	if (keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT]) {
 		camera.ProcessKeyboard(LEFT, deltaTime);
-
-	if (keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT])
+		thrX += 0.25f * deltaTime;
+	}
+	if (keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT]) {
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+		thrX -= 0.25f * deltaTime;
+	}
+
+	if (keys[GLFW_KEY_1])
+		valCamera = 0;
+	if (keys[GLFW_KEY_2])
+		valCamera = 1;
+	if (keys[GLFW_KEY_3])
+		valCamera = 2;
+	if (keys[GLFW_KEY_4])
+		valCamera = 3;
 
 	if (keys[GLFW_KEY_F]) {
 		active = true;
@@ -728,6 +1097,19 @@ void DoMovement(){
 	}
 	if (keys[GLFW_KEY_R])
 		resetScene();
+	if (keys[GLFW_KEY_G])
+		lighton[1] = true;
+	if (keys[GLFW_KEY_H])
+		lighton[1] = false;
+	if (keys[GLFW_KEY_T]) {
+		dayCycle = true;
+		rt_dayCycle.play = true;
+	}
+		
+	if (keys[GLFW_KEY_Y]) {
+		dayCycle = false;
+		rt_dayCycle.play = false;
+	}
 }
 
 // Is called whenever a key is pressed/released via GLFW

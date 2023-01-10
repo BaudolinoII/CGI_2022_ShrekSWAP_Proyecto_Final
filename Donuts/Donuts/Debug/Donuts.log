@@ -1,7 +1,0 @@
-﻿  Donut.cpp
-C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Proyectos\Donuts\Donuts\Donut.cpp(52,20): warning C4018: '<': no coinciden signed/unsigned
-C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Proyectos\Donuts\Donuts\Donut.cpp(65,21): warning C4018: '<': no coinciden signed/unsigned
-  Main.cpp
-  Generando código...
-C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Proyectos\Donuts\Donuts\Donut.cpp(71): warning C4172: devolución de dirección de la variable local o temporal: stack
-  Donuts.vcxproj -> C:\Users\espin\OneDrive\Documentos\Semestre_2023\CGIHC\Proyectos\Donuts\Debug\Donuts.exe

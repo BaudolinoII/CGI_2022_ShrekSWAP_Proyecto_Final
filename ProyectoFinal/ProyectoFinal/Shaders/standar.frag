@@ -1,6 +1,7 @@
 #version 330 core
 
 #define NUMBER_OF_POINT_LIGHTS 4
+#define NUMBER_OF_SPOTLIGHTS 2
 
 struct Material{
     sampler2D diffuse;
@@ -52,7 +53,7 @@ out vec4 color;
 uniform vec3 viewPos;
 uniform DirLight dirLight;
 uniform PointLight pointLights[NUMBER_OF_POINT_LIGHTS];
-uniform SpotLight spotLight;
+uniform SpotLight spotLight[NUMBER_OF_SPOTLIGHTS];
 uniform Material material;
 uniform float alpha;
 uniform float activeAlpha;
@@ -75,7 +76,8 @@ void main( ){
         result += CalcPointLight( pointLights[i], norm, FragPos, viewDir );
 
     // Spot light
-    result += CalcSpotLight( spotLight, norm, FragPos, viewDir );
+    for (int i = 0 ; i < NUMBER_OF_SPOTLIGHTS; i++)
+        result += CalcSpotLight( spotLight[i], norm, FragPos, viewDir );
 	
     color = vec4(result,texture( material.diffuse, TexCoords).rgb)*vec4(1.0,1.0,1.0,alpha);
 	  if(color.a < 0.1 && activeAlpha > 0.0)
